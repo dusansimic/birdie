@@ -1,7 +1,7 @@
 # -- desktop file --------------------------------------------------------
 desktop_file = i18n.merge_file(
-  input: 'org.birdie.Birdie.desktop.in',
-  output: 'org.birdie.Birdie.desktop',
+  input: 'me.dusansimic.Birdie.desktop.in',
+  output: 'me.dusansimic.Birdie.desktop',
   type: 'desktop',
   po_dir: '..' / 'po',
   install: true,
@@ -17,8 +17,8 @@ endif
 
 # -- AppStream metainfo --------------------------------------------------
 metainfo_file = i18n.merge_file(
-  input: 'org.birdie.Birdie.metainfo.xml.in',
-  output: 'org.birdie.Birdie.metainfo.xml',
+  input: 'me.dusansimic.Birdie.metainfo.xml.in',
+  output: 'me.dusansimic.Birdie.metainfo.xml',
   po_dir: '..' / 'po',
   install: true,
   install_dir: datadir / 'metainfo',
@@ -32,7 +32,7 @@ if appstream_util.found()
 endif
 
 # -- GSettings schema ----------------------------------------------------
-install_data('org.birdie.Birdie.gschema.xml',
+install_data('me.dusansimic.Birdie.gschema.xml',
   install_dir: datadir / 'glib-2.0' / 'schemas',
 )
 
@@ -45,6 +45,6 @@ endif
 
 # -- icon ----------------------------------------------------------------
 install_data(
-  'icons' / 'hicolor' / 'scalable' / 'apps' / 'org.birdie.Birdie.svg',
+  'icons' / 'hicolor' / 'scalable' / 'apps' / 'me.dusansimic.Birdie.svg',
   install_dir: datadir / 'icons' / 'hicolor' / 'scalable' / 'apps',
 )

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>org.birdie.Birdie</id>
+  <id>me.dusansimic.Birdie</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
   <name>Birdie</name>
   <summary>Manage your NetBird connection</summary>
-  <developer id="org.birdie">
+  <developer id="me.dusansimic">
     <name>Birdie contributors</name>
   </developer>
   <url type="homepage">https://github.com/netbirdio/netbird</url>
@@ -16,7 +16,7 @@
       networks and profiles, edit client settings, and follow daemon events.
     </p>
   </description>
-  <launchable type="desktop-id">org.birdie.Birdie.desktop</launchable>
+  <launchable type="desktop-id">me.dusansimic.Birdie.desktop</launchable>
   <categories>
     <category>Network</category>
   </categories>

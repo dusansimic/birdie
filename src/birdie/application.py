@@ -13,7 +13,7 @@ from birdie import __version__
 from birdie.daemon.client import NetbirdClient
 from birdie.window import BirdieWindow
 
-APP_ID = "org.birdie.Birdie"
+APP_ID = "me.dusansimic.Birdie"
 
 
 class BirdieApplication(Adw.Application):

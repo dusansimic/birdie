@@ -24,7 +24,9 @@ def main(argv: list[str]) -> int:
 
     result = subprocess.run(
         [
-            sys.executable, "-m", "grpc_tools.protoc",
+            sys.executable,
+            "-m",
+            "grpc_tools.protoc",
             f"-I{proto_dir}",
             f"--python_out={out_dir}",
             f"--grpc_python_out={out_dir}",

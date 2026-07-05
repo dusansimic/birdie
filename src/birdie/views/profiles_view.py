@@ -32,7 +32,7 @@ class ProfilesView(Adw.Bin):
         self._group = Adw.PreferencesGroup(
             title="Profiles",
             description="Switching profiles changes which NetBird account this "
-                        "device uses.",
+            "device uses.",
         )
         self._page.add(self._group)
         self.set_child(self._page)
@@ -40,9 +40,11 @@ class ProfilesView(Adw.Bin):
         self.connect("map", lambda *_: self.refresh())
 
     def refresh(self) -> None:
-        run_async(self._client.list_profiles(),
-                  on_success=self._apply,
-                  on_error=lambda e: self._window.toast(f"Profiles: {e}"))
+        run_async(
+            self._client.list_profiles(),
+            on_success=self._apply,
+            on_error=lambda e: self._window.toast(f"Profiles: {e}"),
+        )
 
     def _apply(self, resp) -> None:
         for row in self._rows:
@@ -73,15 +75,17 @@ class ProfilesView(Adw.Bin):
             switch_btn.connect("clicked", lambda *_: self._do_switch(name))
             box.append(switch_btn)
 
-        rename_btn = Gtk.Button(icon_name="document-edit-symbolic",
-                                valign=Gtk.Align.CENTER)
+        rename_btn = Gtk.Button(
+            icon_name="document-edit-symbolic", valign=Gtk.Align.CENTER
+        )
         rename_btn.add_css_class("flat")
         rename_btn.set_tooltip_text("Rename")
         rename_btn.connect("clicked", lambda *_: self._prompt_rename(name))
         box.append(rename_btn)
 
-        remove_btn = Gtk.Button(icon_name="user-trash-symbolic",
-                                valign=Gtk.Align.CENTER)
+        remove_btn = Gtk.Button(
+            icon_name="user-trash-symbolic", valign=Gtk.Align.CENTER
+        )
         remove_btn.add_css_class("flat")
         remove_btn.set_tooltip_text("Remove")
         remove_btn.set_sensitive(not is_active)
@@ -95,9 +99,11 @@ class ProfilesView(Adw.Bin):
         self._do_switch(name)
 
     def _do_switch(self, name: str) -> None:
-        run_async(self._client.switch_profile(name),
-                  on_success=lambda _: self._after(f"Switched to {name}"),
-                  on_error=lambda e: self._window.toast(f"Switch failed: {e}"))
+        run_async(
+            self._client.switch_profile(name),
+            on_success=lambda _: self._after(f"Switched to {name}"),
+            on_error=lambda e: self._window.toast(f"Switch failed: {e}"),
+        )
 
     def add_profile_dialog(self) -> None:
         """Prompt for a new profile name and add it.
@@ -108,16 +114,26 @@ class ProfilesView(Adw.Bin):
         self._prompt_add()
 
     def _prompt_add(self) -> None:
-        self._name_dialog("Add Profile", "", lambda text: run_async(
-            self._client.add_profile(text),
-            on_success=lambda _: self._after(f"Added {text}"),
-            on_error=lambda e: self._window.toast(f"Add failed: {e}")))
+        self._name_dialog(
+            "Add Profile",
+            "",
+            lambda text: run_async(
+                self._client.add_profile(text),
+                on_success=lambda _: self._after(f"Added {text}"),
+                on_error=lambda e: self._window.toast(f"Add failed: {e}"),
+            ),
+        )
 
     def _prompt_rename(self, old: str) -> None:
-        self._name_dialog("Rename Profile", old, lambda text: run_async(
-            self._client.rename_profile(old, text),
-            on_success=lambda _: self._after(f"Renamed to {text}"),
-            on_error=lambda e: self._window.toast(f"Rename failed: {e}")))
+        self._name_dialog(
+            "Rename Profile",
+            old,
+            lambda text: run_async(
+                self._client.rename_profile(old, text),
+                on_success=lambda _: self._after(f"Renamed to {text}"),
+                on_error=lambda e: self._window.toast(f"Rename failed: {e}"),
+            ),
+        )
 
     def _confirm_remove(self, name: str) -> None:
         dialog = Adw.AlertDialog(
@@ -131,9 +147,11 @@ class ProfilesView(Adw.Bin):
 
         def on_response(_d, response: str) -> None:
             if response == "remove":
-                run_async(self._client.remove_profile(name),
-                          on_success=lambda _: self._after(f"Removed {name}"),
-                          on_error=lambda e: self._window.toast(f"Remove failed: {e}"))
+                run_async(
+                    self._client.remove_profile(name),
+                    on_success=lambda _: self._after(f"Removed {name}"),
+                    on_error=lambda e: self._window.toast(f"Remove failed: {e}"),
+                )
 
         dialog.connect("response", on_response)
         dialog.present(self._window)

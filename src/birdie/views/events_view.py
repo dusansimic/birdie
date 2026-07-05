@@ -81,11 +81,13 @@ class EventsView(Adw.Bin):
     # -- lifecycle ---------------------------------------------------------
 
     def _on_map(self, *_args) -> None:
-        run_async(self._load_level(),
-                  on_error=lambda e: self._window.toast(f"Log level: {e}"))
+        run_async(
+            self._load_level(), on_error=lambda e: self._window.toast(f"Log level: {e}")
+        )
         if self._sub_task is None or self._sub_task.done():
-            self._sub_task = run_async(self._consume_events(),
-                                       on_error=self._on_stream_error)
+            self._sub_task = run_async(
+                self._consume_events(), on_error=self._on_stream_error
+            )
 
     def _on_unmap(self, *_args) -> None:
         if self._sub_task is not None and not self._sub_task.done():
@@ -135,15 +137,19 @@ class EventsView(Adw.Bin):
             return
         name = LOG_LEVELS[row.get_selected()]
         level = pb.LogLevel.Value(name)
-        run_async(self._client.set_log_level(level),
-                  on_success=lambda _: self._window.toast(f"Log level set to {name}"),
-                  on_error=lambda e: self._window.toast(f"Failed: {e}"))
+        run_async(
+            self._client.set_log_level(level),
+            on_success=lambda _: self._window.toast(f"Log level set to {name}"),
+            on_error=lambda e: self._window.toast(f"Failed: {e}"),
+        )
 
     def _make_bundle(self) -> None:
         self._window.toast("Generating debug bundle…")
-        run_async(self._client.debug_bundle(anonymize=True, system_info=True),
-                  on_success=self._bundle_done,
-                  on_error=lambda e: self._window.toast(f"Bundle failed: {e}"))
+        run_async(
+            self._client.debug_bundle(anonymize=True, system_info=True),
+            on_success=self._bundle_done,
+            on_error=lambda e: self._window.toast(f"Bundle failed: {e}"),
+        )
 
     def _bundle_done(self, resp) -> None:
         dialog = Adw.AlertDialog(

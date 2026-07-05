@@ -96,6 +96,15 @@ PYTHONPATH=src python3 -c "import asyncio; from birdie.daemon.client import Netb
 Cross-check state changes with the CLI (`netbird status`, `netbird networks list`,
 `netbird profile list`) — both are clients of the same daemon.
 
+## Branching
+
+- Never commit feature work directly to the default branch (`main`).
+- Branch names follow **`feat/<slug>`** — a short kebab-case slug describing the
+  change (e.g. `feat/stable-peer-list`, `feat/unified-header-bar`). Use other
+  Conventional-Commit-style prefixes when they fit the work: `fix/<slug>`,
+  `docs/<slug>`, `refactor/<slug>`.
+- One branch per logically distinct change; open a pull request per branch.
+
 ## Committing changes
 
 When the developer asks you to commit:

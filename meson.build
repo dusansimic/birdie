@@ -10,7 +10,7 @@ i18n = import('i18n')
 
 py = python.find_installation('python3', modules: ['gi', 'grpc'])
 
-app_id = 'org.birdie.Birdie'
+app_id = 'me.dusansimic.Birdie'
 
 # Installation paths.
 prefix = get_option('prefix')

@@ -120,9 +120,9 @@ class BirdieWindow(Adw.ApplicationWindow):
         # Persist geometry via GSettings, but only if the schema is actually
         # installed (a dev run from the source tree may not have it).
         source = Gio.SettingsSchemaSource.get_default()
-        if source is None or source.lookup("org.birdie.Birdie", True) is None:
+        if source is None or source.lookup("me.dusansimic.Birdie", True) is None:
             return
-        settings = Gio.Settings(schema_id="org.birdie.Birdie")
+        settings = Gio.Settings(schema_id="me.dusansimic.Birdie")
         settings.bind(
             "window-width", self, "default-width", Gio.SettingsBindFlags.DEFAULT
         )

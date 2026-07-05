@@ -1,5 +1,5 @@
-data/org.birdie.Birdie.desktop.in
-data/org.birdie.Birdie.metainfo.xml.in
+data/me.dusansimic.Birdie.desktop.in
+data/me.dusansimic.Birdie.metainfo.xml.in
 src/birdie/application.py
 src/birdie/window.py
 src/birdie/preferences.py

@@ -1,0 +1,39 @@
+{
+    "app-id": "org.birdie.Birdie",
+    "runtime": "org.gnome.Platform",
+    "runtime-version": "50",
+    "sdk": "org.gnome.Sdk",
+    "command": "birdie",
+    "finish-args": [
+        "--socket=wayland",
+        "--socket=fallback-x11",
+        "--share=ipc",
+        "--share=network",
+        "--device=dri",
+        "--filesystem=/run/netbird.sock",
+        "--filesystem=/run/netbird:ro"
+    ],
+    "cleanup": [
+        "/include",
+        "/lib/pkgconfig",
+        "/share/man",
+        "*.a",
+        "*.la"
+    ],
+    "modules": [
+        "python3-deps.json",
+        {
+            "name": "birdie",
+            "buildsystem": "meson",
+            "config-opts": [
+                "-Dgenerate_proto=false"
+            ],
+            "sources": [
+                {
+                    "type": "dir",
+                    "path": "../.."
+                }
+            ]
+        }
+    ]
+}

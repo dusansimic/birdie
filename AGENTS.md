@@ -119,5 +119,10 @@ When the developer asks you to commit:
 3. **Generate every commit message with the `/caveman:caveman-commit` command.**
    Run it per commit (on that commit's staged changes) — do not hand-write
    messages or reuse one message across commits.
-4. Only commit or push when explicitly asked. If on the default branch, branch
+4. **Run pre-commit before committing.** After staging, run
+   `pre-commit run` (on the staged files) yourself and resolve anything it
+   flags — re-stage files black reformats, fix validator failures — before
+   `git commit`. Don't rely on the git hook to catch it, and don't reach for
+   `--no-verify`. Install the hook once with `pre-commit install`.
+5. Only commit or push when explicitly asked. If on the default branch, branch
    first.

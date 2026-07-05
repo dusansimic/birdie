@@ -1,0 +1,50 @@
+# Pre-commit hooks for Birdie. Set up once with `pre-commit install`.
+#
+# The GNOME data-file checks mirror the meson validators run by `just test`
+# (see data/meson.build) so packaging breakage is caught at commit time
+# instead of at build time. They shell out to system tools — desktop-file-utils,
+# appstream (appstreamcli), and glib2 must be on PATH.
+minimum_pre_commit_version: "4.0.0"
+
+repos:
+  # Python formatting. Pinned to the black version developers run locally;
+  # bump with `pre-commit autoupdate`.
+  - repo: https://github.com/psf/black-pre-commit-mirror
+    rev: 25.1.0
+    hooks:
+      - id: black
+        # Generated gRPC stubs must match `just proto` output, not black.
+        exclude: ^src/birdie/daemon/daemon_pb2.*\.py$
+
+  # General hygiene.
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-merge-conflict
+      - id: check-added-large-files
+      - id: check-yaml
+      - id: check-xml
+
+  # GNOME / freedesktop data-file validation.
+  - repo: local
+    hooks:
+      - id: validate-desktop
+        name: validate desktop entry
+        entry: build-aux/validate-desktop.sh
+        language: script
+        files: \.desktop(\.in)?$
+
+      - id: validate-metainfo
+        name: validate AppStream metainfo
+        entry: appstreamcli validate --no-net
+        language: system
+        files: \.metainfo\.xml(\.in)?$
+
+      - id: validate-gschema
+        name: validate GSettings schema
+        entry: glib-compile-schemas --strict --dry-run data/
+        language: system
+        files: \.gschema\.xml$
+        pass_filenames: false

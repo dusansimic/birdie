@@ -41,17 +41,23 @@ class BirdieWindow(Adw.ApplicationWindow):
 
         self.networks_view = NetworksView(self)
         self._stack.add_titled_with_icon(
-            self.networks_view, "networks", "Networks",
+            self.networks_view,
+            "networks",
+            "Networks",
             "network-workgroup-symbolic",
         )
         self.profiles_view = ProfilesView(self)
         self._stack.add_titled_with_icon(
-            self.profiles_view, "profiles", "Profiles",
+            self.profiles_view,
+            "profiles",
+            "Profiles",
             "avatar-default-symbolic",
         )
         self.events_view = EventsView(self)
         self._stack.add_titled_with_icon(
-            self.events_view, "events", "Events",
+            self.events_view,
+            "events",
+            "Events",
             "document-open-recent-symbolic",
         )
 
@@ -68,9 +74,7 @@ class BirdieWindow(Adw.ApplicationWindow):
         # shown; see ``_on_page_changed``.
         self._refresh_button = Gtk.Button(icon_name="view-refresh-symbolic")
         self._refresh_button.set_tooltip_text("Refresh networks")
-        self._refresh_button.connect(
-            "clicked", lambda *_: self.networks_view.refresh()
-        )
+        self._refresh_button.connect("clicked", lambda *_: self.networks_view.refresh())
         header.pack_start(self._refresh_button)
 
         self._add_button = Gtk.Button(icon_name="list-add-symbolic")
@@ -85,14 +89,15 @@ class BirdieWindow(Adw.ApplicationWindow):
         toolbar_view.set_content(self._stack)
 
         # Reflect the active page in the header action buttons.
-        self._stack.connect(
-            "notify::visible-child-name", self._on_page_changed
-        )
+        self._stack.connect("notify::visible-child-name", self._on_page_changed)
         self._on_page_changed()
 
         # Hide feature-gated pages once the daemon reports its feature flags.
-        run_async(self.client.get_features(), on_success=self._apply_features,
-                  on_error=lambda _e: None)
+        run_async(
+            self.client.get_features(),
+            on_success=self._apply_features,
+            on_error=lambda _e: None,
+        )
 
     def _on_page_changed(self, *_args) -> None:
         # Show only the action button relevant to the active page; Status and
@@ -118,21 +123,22 @@ class BirdieWindow(Adw.ApplicationWindow):
         if source is None or source.lookup("org.birdie.Birdie", True) is None:
             return
         settings = Gio.Settings(schema_id="org.birdie.Birdie")
-        settings.bind("window-width", self, "default-width",
-                      Gio.SettingsBindFlags.DEFAULT)
-        settings.bind("window-height", self, "default-height",
-                      Gio.SettingsBindFlags.DEFAULT)
-        settings.bind("window-maximized", self, "maximized",
-                      Gio.SettingsBindFlags.DEFAULT)
+        settings.bind(
+            "window-width", self, "default-width", Gio.SettingsBindFlags.DEFAULT
+        )
+        settings.bind(
+            "window-height", self, "default-height", Gio.SettingsBindFlags.DEFAULT
+        )
+        settings.bind(
+            "window-maximized", self, "maximized", Gio.SettingsBindFlags.DEFAULT
+        )
 
     def _build_menu_button(self) -> Gtk.MenuButton:
         menu = Gio.Menu()
         menu.append("Preferences", "app.preferences")
         menu.append("About Birdie", "app.about")
         menu.append("Quit", "app.quit")
-        button = Gtk.MenuButton(
-            icon_name="open-menu-symbolic", menu_model=menu
-        )
+        button = Gtk.MenuButton(icon_name="open-menu-symbolic", menu_model=menu)
         return button
 
     # -- shared UI helpers --------------------------------------------------

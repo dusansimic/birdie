@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 LOG_LEVELS = ["PANIC", "FATAL", "ERROR", "WARN", "INFO", "DEBUG", "TRACE"]
 
 _SEVERITY_ICON = {
-    pb.SystemEvent.Severity.INFO: "emblem-default-symbolic",
+    pb.SystemEvent.Severity.INFO: "emblem-important-symbolic",
     pb.SystemEvent.Severity.WARNING: "dialog-warning-symbolic",
     pb.SystemEvent.Severity.ERROR: "dialog-error-symbolic",
     pb.SystemEvent.Severity.CRITICAL: "dialog-error-symbolic",
@@ -108,7 +108,7 @@ class EventsView(Adw.Bin):
 
     def _add_event(self, event) -> None:
         self._events_placeholder.set_visible(False)
-        icon_name = _SEVERITY_ICON.get(event.severity, "emblem-default-symbolic")
+        icon_name = _SEVERITY_ICON.get(event.severity, "emblem-important-symbolic")
         category = pb.SystemEvent.Category.Name(event.category)
         row = Adw.ActionRow(
             title=event.userMessage or event.message,

@@ -41,14 +41,8 @@ class EventsView(Adw.Bin):
         self._sub_task: Optional[asyncio.Task] = None
         self._event_rows: list[Gtk.Widget] = []
 
-        toolbar = Adw.ToolbarView()
-        self.set_child(toolbar)
-        header = Adw.HeaderBar(show_title=False)
-        header.add_css_class("flat")
-        toolbar.add_top_bar(header)
-
         page = Adw.PreferencesPage()
-        toolbar.set_content(page)
+        self.set_child(page)
 
         # -- diagnostics controls ---------------------------------------
         diag = Adw.PreferencesGroup(title="Diagnostics")

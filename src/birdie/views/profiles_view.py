@@ -28,17 +28,6 @@ class ProfilesView(Adw.Bin):
         self._client = window.client
         self._rows: list[Gtk.Widget] = []
 
-        self._toolbar = Adw.ToolbarView()
-        self.set_child(self._toolbar)
-
-        header = Adw.HeaderBar(show_title=False)
-        header.add_css_class("flat")
-        add_button = Gtk.Button(icon_name="list-add-symbolic")
-        add_button.set_tooltip_text("Add profile")
-        add_button.connect("clicked", lambda *_: self._prompt_add())
-        header.pack_start(add_button)
-        self._toolbar.add_top_bar(header)
-
         self._page = Adw.PreferencesPage()
         self._group = Adw.PreferencesGroup(
             title="Profiles",
@@ -46,7 +35,7 @@ class ProfilesView(Adw.Bin):
                         "device uses.",
         )
         self._page.add(self._group)
-        self._toolbar.set_content(self._page)
+        self.set_child(self._page)
 
         self.connect("map", lambda *_: self.refresh())
 
@@ -109,6 +98,14 @@ class ProfilesView(Adw.Bin):
         run_async(self._client.switch_profile(name),
                   on_success=lambda _: self._after(f"Switched to {name}"),
                   on_error=lambda e: self._window.toast(f"Switch failed: {e}"))
+
+    def add_profile_dialog(self) -> None:
+        """Prompt for a new profile name and add it.
+
+        Public entry point for the Add action, which now lives in the window
+        header bar rather than a per-view header.
+        """
+        self._prompt_add()
 
     def _prompt_add(self) -> None:
         self._name_dialog("Add Profile", "", lambda text: run_async(

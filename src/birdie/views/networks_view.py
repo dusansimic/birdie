@@ -32,17 +32,6 @@ class NetworksView(Adw.Bin):
         self._rows: list[Gtk.Widget] = []
         self._suppress_toggle = False
 
-        self._toolbar = Adw.ToolbarView()
-        self.set_child(self._toolbar)
-
-        header = Adw.HeaderBar(show_title=False)
-        header.add_css_class("flat")
-        refresh = Gtk.Button(icon_name="view-refresh-symbolic")
-        refresh.set_tooltip_text("Refresh networks")
-        refresh.connect("clicked", lambda *_: self.refresh())
-        header.pack_start(refresh)
-        self._toolbar.add_top_bar(header)
-
         self._page = Adw.PreferencesPage()
         self._group = Adw.PreferencesGroup(
             title="Networks",
@@ -56,7 +45,7 @@ class NetworksView(Adw.Bin):
             icon_name="network-workgroup-symbolic",
         )
 
-        self._toolbar.set_content(self._empty)
+        self.set_child(self._empty)
 
         self.connect("map", lambda *_: self.refresh())
 
@@ -76,10 +65,10 @@ class NetworksView(Adw.Bin):
             self._empty.set_description(
                 "There are no routed networks for this profile."
             )
-            self._toolbar.set_content(self._empty)
+            self.set_child(self._empty)
             return
 
-        self._toolbar.set_content(self._page)
+        self.set_child(self._page)
         for net in sorted(networks, key=lambda n: n.ID):
             row = Adw.SwitchRow(title=net.ID or net.range)
             subtitle = net.range
@@ -129,4 +118,4 @@ class NetworksView(Adw.Bin):
             "Connect to NetBird to manage networks."
             if "not connected" in detail.lower() else detail
         )
-        self._toolbar.set_content(self._empty)
+        self.set_child(self._empty)

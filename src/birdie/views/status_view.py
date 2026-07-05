@@ -41,7 +41,6 @@ class _PeerRow:
         self._icon = Gtk.Image()
         self.row.add_prefix(self._icon)
         self._badge = Gtk.Label()
-        self._badge.add_css_class("dim-label")
         self._badge.set_valign(Gtk.Align.CENTER)
         self.row.add_suffix(self._badge)
         self.update(peer)
@@ -59,7 +58,13 @@ class _PeerRow:
             "network-transmit-receive-symbolic" if connected
             else "network-offline-symbolic"
         )
+        connecting = peer.connStatus == "Connecting"
         self._badge.set_label(peer.connStatus)
+        for css_class in ("success", "warning", "dimmed"):
+            self._badge.remove_css_class(css_class)
+        self._badge.add_css_class(
+            "success" if connected else "warning" if connecting else "dimmed"
+        )
 
 
 class StatusView(Adw.Bin):

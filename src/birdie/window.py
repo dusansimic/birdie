@@ -66,15 +66,6 @@ class BirdieWindow(Adw.ApplicationWindow):
 
         toolbar_view.set_content(self._stack)
 
-        # Bottom switcher for narrow widths.
-        switcher_bar = Adw.ViewSwitcherBar(stack=self._stack)
-        toolbar_view.add_bottom_bar(switcher_bar)
-        self._stack.connect(
-            "notify::visible-child",
-            lambda *_: None,
-        )
-        switcher_bar.set_reveal(True)
-
         # Hide feature-gated pages once the daemon reports its feature flags.
         run_async(self.client.get_features(), on_success=self._apply_features,
                   on_error=lambda _e: None)

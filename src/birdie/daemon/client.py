@@ -34,8 +34,13 @@ INSTANCE_SOCKET_DIRS = ("/var/run/netbird", "/run/netbird")
 class DaemonError(Exception):
     """A daemon call failed. Wraps the underlying gRPC error."""
 
-    def __init__(self, message: str, *, code: Optional[grpc.StatusCode] = None,
-                 cause: Optional[BaseException] = None):
+    def __init__(
+        self,
+        message: str,
+        *,
+        code: Optional[grpc.StatusCode] = None,
+        cause: Optional[BaseException] = None,
+    ):
         super().__init__(message)
         self.code = code
         self.cause = cause
@@ -107,15 +112,18 @@ class NetbirdClient:
 
     # -- connection lifecycle RPCs ----------------------------------------
 
-    async def status(self, *, full: bool = True, probes: bool = False,
-                     wait_for_ready: bool = False) -> pb.StatusResponse:
+    async def status(
+        self, *, full: bool = True, probes: bool = False, wait_for_ready: bool = False
+    ) -> pb.StatusResponse:
         stub = await self._ensure()
         try:
-            return await stub.Status(pb.StatusRequest(
-                getFullPeerStatus=full,
-                shouldRunProbes=probes,
-                waitForReady=wait_for_ready,
-            ))
+            return await stub.Status(
+                pb.StatusRequest(
+                    getFullPeerStatus=full,
+                    shouldRunProbes=probes,
+                    waitForReady=wait_for_ready,
+                )
+            )
         except grpc.aio.AioRpcError as err:
             raise DaemonError.from_rpc(err)
 
@@ -137,9 +145,15 @@ class NetbirdClient:
         except grpc.aio.AioRpcError as err:
             raise DaemonError.from_rpc(err)
 
-    async def login(self, *, setup_key: str = "", management_url: str = "",
-                    hint: str = "", profile_name: Optional[str] = None,
-                    hostname: str = "") -> pb.LoginResponse:
+    async def login(
+        self,
+        *,
+        setup_key: str = "",
+        management_url: str = "",
+        hint: str = "",
+        profile_name: Optional[str] = None,
+        hostname: str = "",
+    ) -> pb.LoginResponse:
         """Prepare/validate config. Does not bring the tunnel up.
 
         Returns a response whose ``needsSSOLogin`` tells the caller whether an
@@ -171,8 +185,9 @@ class NetbirdClient:
         """
         stub = await self._ensure()
         try:
-            resp = await stub.WaitSSOLogin(pb.WaitSSOLoginRequest(
-                userCode=user_code, hostname=hostname))
+            resp = await stub.WaitSSOLogin(
+                pb.WaitSSOLoginRequest(userCode=user_code, hostname=hostname)
+            )
             return resp.email
         except grpc.aio.AioRpcError as err:
             raise DaemonError.from_rpc(err)
@@ -190,8 +205,9 @@ class NetbirdClient:
     async def get_config(self) -> pb.GetConfigResponse:
         stub = await self._ensure()
         try:
-            return await stub.GetConfig(pb.GetConfigRequest(
-                username=current_username()))
+            return await stub.GetConfig(
+                pb.GetConfigRequest(username=current_username())
+            )
         except grpc.aio.AioRpcError as err:
             raise DaemonError.from_rpc(err)
 
@@ -218,21 +234,27 @@ class NetbirdClient:
         except grpc.aio.AioRpcError as err:
             raise DaemonError.from_rpc(err)
 
-    async def select_networks(self, network_ids: Sequence[str], *,
-                              append: bool = False, all: bool = False) -> None:
+    async def select_networks(
+        self, network_ids: Sequence[str], *, append: bool = False, all: bool = False
+    ) -> None:
         stub = await self._ensure()
         try:
-            await stub.SelectNetworks(pb.SelectNetworksRequest(
-                networkIDs=list(network_ids), append=append, all=all))
+            await stub.SelectNetworks(
+                pb.SelectNetworksRequest(
+                    networkIDs=list(network_ids), append=append, all=all
+                )
+            )
         except grpc.aio.AioRpcError as err:
             raise DaemonError.from_rpc(err)
 
-    async def deselect_networks(self, network_ids: Sequence[str], *,
-                                all: bool = False) -> None:
+    async def deselect_networks(
+        self, network_ids: Sequence[str], *, all: bool = False
+    ) -> None:
         stub = await self._ensure()
         try:
-            await stub.DeselectNetworks(pb.SelectNetworksRequest(
-                networkIDs=list(network_ids), all=all))
+            await stub.DeselectNetworks(
+                pb.SelectNetworksRequest(networkIDs=list(network_ids), all=all)
+            )
         except grpc.aio.AioRpcError as err:
             raise DaemonError.from_rpc(err)
 
@@ -241,8 +263,9 @@ class NetbirdClient:
     async def list_profiles(self) -> pb.ListProfilesResponse:
         stub = await self._ensure()
         try:
-            return await stub.ListProfiles(pb.ListProfilesRequest(
-                username=current_username()))
+            return await stub.ListProfiles(
+                pb.ListProfilesRequest(username=current_username())
+            )
         except grpc.aio.AioRpcError as err:
             raise DaemonError.from_rpc(err)
 
@@ -256,8 +279,9 @@ class NetbirdClient:
     async def add_profile(self, name: str) -> str:
         stub = await self._ensure()
         try:
-            resp = await stub.AddProfile(pb.AddProfileRequest(
-                username=current_username(), profileName=name))
+            resp = await stub.AddProfile(
+                pb.AddProfileRequest(username=current_username(), profileName=name)
+            )
             return resp.id
         except grpc.aio.AioRpcError as err:
             raise DaemonError.from_rpc(err)
@@ -265,25 +289,29 @@ class NetbirdClient:
     async def rename_profile(self, handle: str, new_name: str) -> None:
         stub = await self._ensure()
         try:
-            await stub.RenameProfile(pb.RenameProfileRequest(
-                username=current_username(), handle=handle,
-                newProfileName=new_name))
+            await stub.RenameProfile(
+                pb.RenameProfileRequest(
+                    username=current_username(), handle=handle, newProfileName=new_name
+                )
+            )
         except grpc.aio.AioRpcError as err:
             raise DaemonError.from_rpc(err)
 
     async def remove_profile(self, handle: str) -> None:
         stub = await self._ensure()
         try:
-            await stub.RemoveProfile(pb.RemoveProfileRequest(
-                username=current_username(), profileName=handle))
+            await stub.RemoveProfile(
+                pb.RemoveProfileRequest(username=current_username(), profileName=handle)
+            )
         except grpc.aio.AioRpcError as err:
             raise DaemonError.from_rpc(err)
 
     async def switch_profile(self, handle: str) -> str:
         stub = await self._ensure()
         try:
-            resp = await stub.SwitchProfile(pb.SwitchProfileRequest(
-                username=current_username(), profileName=handle))
+            resp = await stub.SwitchProfile(
+                pb.SwitchProfileRequest(username=current_username(), profileName=handle)
+            )
             return resp.id
         except grpc.aio.AioRpcError as err:
             raise DaemonError.from_rpc(err)
@@ -304,14 +332,22 @@ class NetbirdClient:
         except grpc.aio.AioRpcError as err:
             raise DaemonError.from_rpc(err)
 
-    async def debug_bundle(self, *, anonymize: bool = True,
-                           system_info: bool = True,
-                           log_file_count: int = 0) -> pb.DebugBundleResponse:
+    async def debug_bundle(
+        self,
+        *,
+        anonymize: bool = True,
+        system_info: bool = True,
+        log_file_count: int = 0,
+    ) -> pb.DebugBundleResponse:
         stub = await self._ensure()
         try:
-            return await stub.DebugBundle(pb.DebugBundleRequest(
-                anonymize=anonymize, systemInfo=system_info,
-                logFileCount=log_file_count))
+            return await stub.DebugBundle(
+                pb.DebugBundleRequest(
+                    anonymize=anonymize,
+                    systemInfo=system_info,
+                    logFileCount=log_file_count,
+                )
+            )
         except grpc.aio.AioRpcError as err:
             raise DaemonError.from_rpc(err)
 

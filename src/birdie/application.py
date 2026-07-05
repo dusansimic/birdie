@@ -26,8 +26,7 @@ class BirdieApplication(Adw.Application):
         self._window: BirdieWindow | None = None
 
         self._add_action("about", self._on_about)
-        self._add_action("preferences", self._on_preferences,
-                         accels=["<primary>comma"])
+        self._add_action("preferences", self._on_preferences, accels=["<primary>comma"])
         self._add_action("quit", lambda *_: self.quit(), accels=["<primary>q"])
 
     def _add_action(self, name: str, callback, accels: list[str] | None = None) -> None:

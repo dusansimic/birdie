@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.birdie.Birdie" path="/org/birdie/Birdie/">
+    <key name="window-width" type="i">
+      <default>920</default>
+      <summary>Window width</summary>
+    </key>
+    <key name="window-height" type="i">
+      <default>680</default>
+      <summary>Window height</summary>
+    </key>
+    <key name="window-maximized" type="b">
+      <default>false</default>
+      <summary>Window maximized state</summary>
+    </key>
+  </schema>
+</schemalist>

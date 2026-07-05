@@ -1,0 +1,14 @@
+#!@PYTHON@
+# Launcher stub configured by Meson.
+import os
+import signal
+import sys
+
+# Ensure the installed `birdie` package is importable even under a custom prefix.
+sys.path.insert(1, '@MODULE_PARENT@')
+
+signal.signal(signal.SIGINT, signal.SIG_DFL)
+
+if __name__ == '__main__':
+    from birdie.main import main
+    sys.exit(main())

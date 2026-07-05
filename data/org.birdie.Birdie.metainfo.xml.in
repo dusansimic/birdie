@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>org.birdie.Birdie</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>Birdie</name>
+  <summary>Manage your NetBird connection</summary>
+  <developer id="org.birdie">
+    <name>Birdie contributors</name>
+  </developer>
+  <url type="homepage">https://github.com/netbirdio/netbird</url>
+  <description>
+    <p>
+      Birdie is a GNOME front-end for the NetBird client. It talks to the local
+      NetBird daemon to connect and disconnect, browse peers, manage routed
+      networks and profiles, edit client settings, and follow daemon events.
+    </p>
+  </description>
+  <launchable type="desktop-id">org.birdie.Birdie.desktop</launchable>
+  <categories>
+    <category>Network</category>
+  </categories>
+  <content_rating type="oars-1.1" />
+  <releases>
+    <release version="0.1.0" date="2026-07-05">
+      <description>
+        <p>Initial release.</p>
+      </description>
+    </release>
+  </releases>
+</component>

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Birdie
+GenericName=NetBird Client
+Comment=Manage your NetBird connection
+Keywords=VPN;NetBird;WireGuard;Network;
+Icon=org.birdie.Birdie
+Exec=birdie
+Terminal=false
+Type=Application
+Categories=Network;GTK;
+StartupNotify=true

@@ -1,0 +1,10 @@
+data/org.birdie.Birdie.desktop.in
+data/org.birdie.Birdie.metainfo.xml.in
+src/birdie/application.py
+src/birdie/window.py
+src/birdie/preferences.py
+src/birdie/views/status_view.py
+src/birdie/views/login_dialog.py
+src/birdie/views/networks_view.py
+src/birdie/views/profiles_view.py
+src/birdie/views/events_view.py

@@ -1,0 +1,5 @@
+option('generate_proto',
+  type: 'boolean',
+  value: true,
+  description: 'Regenerate gRPC stubs from proto/daemon.proto at build time (requires grpcio-tools). When false, the committed src/birdie/daemon/daemon_pb2*.py are installed as-is (used by the Flatpak build).',
+)

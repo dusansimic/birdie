@@ -1,0 +1,14 @@
+# Build output
+/build/
+/build-*/
+/_build/
+!/build-aux/
+
+# Flatpak
+/.flatpak-builder/
+/flatpak-build/
+/repo/
+
+# Python
+__pycache__/
+*.py[cod]

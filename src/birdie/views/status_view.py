@@ -24,6 +24,44 @@ if TYPE_CHECKING:
 POLL_INTERVAL_SECONDS = 2
 
 
+def _peer_key(peer) -> str:
+    """Stable identity for a peer row, so rows survive across polls.
+
+    Prefers the cryptographic ``pubKey``; falls back to ``fqdn`` then ``IP``
+    for the rare peer whose key hasn't been exchanged yet.
+    """
+    return peer.pubKey or peer.fqdn or peer.IP
+
+
+class _PeerRow:
+    """A single peer's ``Adw.ActionRow`` plus the widgets updated in place."""
+
+    def __init__(self, peer) -> None:
+        self.row = Adw.ActionRow()
+        self._icon = Gtk.Image()
+        self.row.add_prefix(self._icon)
+        self._badge = Gtk.Label()
+        self._badge.add_css_class("dim-label")
+        self._badge.set_valign(Gtk.Align.CENTER)
+        self.row.add_suffix(self._badge)
+        self.update(peer)
+
+    def update(self, peer) -> None:
+        connected = peer.connStatus == "Connected"
+        subtitle_parts = [peer.IP]
+        if connected:
+            subtitle_parts.append("relayed" if peer.relayed else "direct")
+            if peer.latency and peer.latency.ToMilliseconds() > 0:
+                subtitle_parts.append(f"{peer.latency.ToMilliseconds()} ms")
+        self.row.set_title(peer.fqdn or peer.IP)
+        self.row.set_subtitle(" · ".join(p for p in subtitle_parts if p))
+        self._icon.set_from_icon_name(
+            "network-transmit-receive-symbolic" if connected
+            else "network-offline-symbolic"
+        )
+        self._badge.set_label(peer.connStatus)
+
+
 class StatusView(Adw.Bin):
     def __init__(self, window: "BirdieWindow") -> None:
         super().__init__()
@@ -68,9 +106,12 @@ class StatusView(Adw.Bin):
             self._device_group.add(row)
 
         # -- peers -------------------------------------------------------
+        # Rows are kept in an indexed model keyed by a stable peer identity so
+        # each ``Status`` poll can update rows in place and reuse widgets
+        # instead of tearing down and rebuilding the whole group every tick.
         self._peers_group = Adw.PreferencesGroup(title="Peers")
         page.add(self._peers_group)
-        self._peer_rows: list[Gtk.Widget] = []
+        self._peer_rows: dict[str, _PeerRow] = {}
         self._peers_placeholder = Adw.ActionRow(
             title="No peers", subtitle="Connect to see network peers."
         )
@@ -152,38 +193,48 @@ class StatusView(Adw.Bin):
         self._connect_button.set_sensitive(not self._busy and state != "Connecting")
 
     def _render_peers(self, peers) -> None:
-        for row in self._peer_rows:
-            self._peers_group.remove(row)
-        self._peer_rows.clear()
-
+        # The daemon returns peers in an unstable order, so render against a
+        # deterministic sort (fqdn, then IP) and reconcile against the existing
+        # keyed rows: update in place, drop the gone, create the new. This keeps
+        # each peer's row in a fixed position across polls instead of visibly
+        # reshuffling every tick.
         if not peers:
+            for peer_row in self._peer_rows.values():
+                self._peers_group.remove(peer_row.row)
+            self._peer_rows.clear()
             self._peers_placeholder.set_visible(True)
             return
         self._peers_placeholder.set_visible(False)
 
-        for peer in peers:
-            connected = peer.connStatus == "Connected"
-            transport = "relayed" if peer.relayed else "direct"
-            subtitle_parts = [peer.IP]
-            if connected:
-                subtitle_parts.append(transport)
-                if peer.latency and peer.latency.ToMilliseconds() > 0:
-                    subtitle_parts.append(f"{peer.latency.ToMilliseconds()} ms")
-            row = Adw.ActionRow(
-                title=peer.fqdn or peer.IP,
-                subtitle=" · ".join(p for p in subtitle_parts if p),
-            )
-            icon = Gtk.Image.new_from_icon_name(
-                "network-transmit-receive-symbolic" if connected
-                else "network-offline-symbolic"
-            )
-            row.add_prefix(icon)
-            badge = Gtk.Label(label=peer.connStatus)
-            badge.add_css_class("dim-label")
-            badge.set_valign(Gtk.Align.CENTER)
-            row.add_suffix(badge)
-            self._peers_group.add(row)
-            self._peer_rows.append(row)
+        ordered = sorted(peers, key=lambda p: (p.fqdn or "", p.IP or ""))
+        desired = {_peer_key(p): p for p in ordered}
+
+        for key in list(self._peer_rows):
+            if key not in desired:
+                self._peers_group.remove(self._peer_rows.pop(key).row)
+
+        added = False
+        for peer in ordered:
+            key = _peer_key(peer)
+            peer_row = self._peer_rows.get(key)
+            if peer_row is None:
+                self._peer_rows[key] = _PeerRow(peer)
+                added = True
+            else:
+                peer_row.update(peer)
+
+        # Newly created rows aren't parented yet, and re-seating in sorted order
+        # is only needed when membership changed; steady-state polls just update
+        # titles/badges in place and leave positions untouched. So: on a change,
+        # unparent whatever is currently in the group and (re-)add every row in
+        # sorted order.
+        if added:
+            for peer in ordered:
+                row = self._peer_rows[_peer_key(peer)].row
+                if row.get_parent() is not None:
+                    self._peers_group.remove(row)
+            for peer in ordered:
+                self._peers_group.add(self._peer_rows[_peer_key(peer)].row)
 
     def _on_status_error(self, exc: BaseException) -> None:
         message = str(exc)

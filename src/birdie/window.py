@@ -62,13 +62,44 @@ class BirdieWindow(Adw.ApplicationWindow):
         )
         header.set_title_widget(switcher)
         header.pack_end(self._build_menu_button())
+
+        # Per-page primary actions live in the single window header (GNOME HIG),
+        # aligned with the view switcher. Only the button for the active page is
+        # shown; see ``_on_page_changed``.
+        self._refresh_button = Gtk.Button(icon_name="view-refresh-symbolic")
+        self._refresh_button.set_tooltip_text("Refresh networks")
+        self._refresh_button.connect(
+            "clicked", lambda *_: self.networks_view.refresh()
+        )
+        header.pack_start(self._refresh_button)
+
+        self._add_button = Gtk.Button(icon_name="list-add-symbolic")
+        self._add_button.set_tooltip_text("Add profile")
+        self._add_button.connect(
+            "clicked", lambda *_: self.profiles_view.add_profile_dialog()
+        )
+        header.pack_start(self._add_button)
+
         toolbar_view.add_top_bar(header)
 
         toolbar_view.set_content(self._stack)
 
+        # Reflect the active page in the header action buttons.
+        self._stack.connect(
+            "notify::visible-child-name", self._on_page_changed
+        )
+        self._on_page_changed()
+
         # Hide feature-gated pages once the daemon reports its feature flags.
         run_async(self.client.get_features(), on_success=self._apply_features,
                   on_error=lambda _e: None)
+
+    def _on_page_changed(self, *_args) -> None:
+        # Show only the action button relevant to the active page; Status and
+        # Events have no page-level action.
+        name = self._stack.get_visible_child_name()
+        self._refresh_button.set_visible(name == "networks")
+        self._add_button.set_visible(name == "profiles")
 
     def _apply_features(self, features) -> None:
         if features.disable_networks:

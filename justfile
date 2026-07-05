@@ -34,13 +34,13 @@ install DESTDIR="":
 # Build the Flatpak into ./repo.
 flatpak:
     flatpak run org.flatpak.Builder --force-clean --user --install-deps-from=flathub \
-        --repo=repo flatpak-build build-aux/flatpak/org.birdie.Birdie.json
+        --repo=repo flatpak-build build-aux/flatpak/me.dusansimic.Birdie.json
 
 # Install the locally-built Flatpak and run it.
 flatpak-run: flatpak
     flatpak remote-add --user --no-gpg-verify --if-not-exists birdie-local repo
-    flatpak install --user -y --reinstall birdie-local org.birdie.Birdie
-    flatpak run org.birdie.Birdie
+    flatpak install --user -y --reinstall birdie-local me.dusansimic.Birdie
+    flatpak run me.dusansimic.Birdie
 
 # Remove build artifacts.
 clean:

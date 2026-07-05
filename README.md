@@ -53,8 +53,8 @@ PYTHONPATH=src python3 -c "from birdie.main import main; main()"
 
 ```sh
 flatpak run org.flatpak.Builder --force-clean --user --install-deps-from=flathub \
-  --repo=repo flatpak-build build-aux/flatpak/org.birdie.Birdie.json
-flatpak build-bundle repo birdie.flatpak org.birdie.Birdie   # optional
+  --repo=repo flatpak-build build-aux/flatpak/me.dusansimic.Birdie.json
+flatpak build-bundle repo birdie.flatpak me.dusansimic.Birdie   # optional
 ```
 
 The Flatpak build installs pre-generated gRPC stubs (`-Dgenerate_proto=false`)

@@ -43,9 +43,7 @@ class LoginDialog(Adw.Dialog):
         toolbar_view.add_top_bar(header)
         self.set_child(toolbar_view)
 
-        self._stack = Gtk.Stack(
-            transition_type=Gtk.StackTransitionType.CROSSFADE
-        )
+        self._stack = Gtk.Stack(transition_type=Gtk.StackTransitionType.CROSSFADE)
         toolbar_view.set_content(self._stack)
 
         self._stack.add_named(self._build_chooser(), "chooser")
@@ -113,7 +111,8 @@ class LoginDialog(Adw.Dialog):
 
     def _build_progress_box(self, spinner: Gtk.Widget) -> Gtk.Widget:
         box = Gtk.Box(
-            orientation=Gtk.Orientation.VERTICAL, spacing=12,
+            orientation=Gtk.Orientation.VERTICAL,
+            spacing=12,
             halign=Gtk.Align.CENTER,
         )
         box.append(spinner)
@@ -136,9 +135,7 @@ class LoginDialog(Adw.Dialog):
         self._stack.set_visible_child_name("progress")
         self._status_page.set_title("Contacting management server…")
         self._code_label.set_text("")
-        self._task = run_async(
-            self._run_sso(), on_error=self._on_flow_error
-        )
+        self._task = run_async(self._run_sso(), on_error=self._on_flow_error)
 
     async def _run_sso(self) -> None:
         hostname = socket.gethostname()
@@ -174,9 +171,7 @@ class LoginDialog(Adw.Dialog):
         self._stack.set_visible_child_name("progress")
         self._status_page.set_title("Authenticating…")
         self._open_button.set_visible(False)
-        self._task = run_async(
-            self._run_setupkey(key), on_error=self._on_flow_error
-        )
+        self._task = run_async(self._run_setupkey(key), on_error=self._on_flow_error)
 
     async def _run_setupkey(self, key: str) -> None:
         await self._client.login(setup_key=key, hostname=socket.gethostname())

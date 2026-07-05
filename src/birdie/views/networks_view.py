@@ -50,9 +50,11 @@ class NetworksView(Adw.Bin):
         self.connect("map", lambda *_: self.refresh())
 
     def refresh(self) -> None:
-        run_async(self._client.list_networks(),
-                  on_success=self._apply,
-                  on_error=self._on_error)
+        run_async(
+            self._client.list_networks(),
+            on_success=self._apply,
+            on_error=self._on_error,
+        )
 
     def _apply(self, resp) -> None:
         for row in self._rows:
@@ -73,8 +75,11 @@ class NetworksView(Adw.Bin):
             row = Adw.SwitchRow(title=net.ID or net.range)
             subtitle = net.range
             if net.domains:
-                subtitle = f"{subtitle}  ·  {', '.join(net.domains)}" if subtitle \
+                subtitle = (
+                    f"{subtitle}  ·  {', '.join(net.domains)}"
+                    if subtitle
                     else ", ".join(net.domains)
+                )
             row.set_subtitle(subtitle)
             self._suppress_toggle = True
             row.set_active(net.selected)
@@ -91,9 +96,7 @@ class NetworksView(Adw.Bin):
 
         def done(_result) -> None:
             row.set_sensitive(True)
-            self._window.toast(
-                f"{'Selected' if active else 'Deselected'} {network_id}"
-            )
+            self._window.toast(f"{'Selected' if active else 'Deselected'} {network_id}")
 
         def failed(exc: BaseException) -> None:
             row.set_sensitive(True)
@@ -104,11 +107,17 @@ class NetworksView(Adw.Bin):
             self._window.toast(f"Failed to update {network_id}: {exc}")
 
         if active:
-            run_async(self._client.select_networks([network_id], append=True),
-                      on_success=done, on_error=failed)
+            run_async(
+                self._client.select_networks([network_id], append=True),
+                on_success=done,
+                on_error=failed,
+            )
         else:
-            run_async(self._client.deselect_networks([network_id]),
-                      on_success=done, on_error=failed)
+            run_async(
+                self._client.deselect_networks([network_id]),
+                on_success=done,
+                on_error=failed,
+            )
 
     def _on_error(self, exc: BaseException) -> None:
         # "not connected" is the common case when the tunnel is down.
@@ -116,6 +125,7 @@ class NetworksView(Adw.Bin):
         self._empty.set_title("Networks unavailable")
         self._empty.set_description(
             "Connect to NetBird to manage networks."
-            if "not connected" in detail.lower() else detail
+            if "not connected" in detail.lower()
+            else detail
         )
         self.set_child(self._empty)

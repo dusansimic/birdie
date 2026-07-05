@@ -56,7 +56,8 @@ class _PeerRow:
         self.row.set_title(peer.fqdn or peer.IP)
         self.row.set_subtitle(" · ".join(p for p in subtitle_parts if p))
         self._icon.set_from_icon_name(
-            "network-transmit-receive-symbolic" if connected
+            "network-transmit-receive-symbolic"
+            if connected
             else "network-offline-symbolic"
         )
         self._badge.set_label(peer.connStatus)
@@ -140,14 +141,18 @@ class StatusView(Adw.Bin):
         return GLib.SOURCE_CONTINUE
 
     def refresh(self) -> None:
-        run_async(self._client.status(full=True, probes=False),
-                  on_success=self._apply_status,
-                  on_error=self._on_status_error)
+        run_async(
+            self._client.status(full=True, probes=False),
+            on_success=self._apply_status,
+            on_error=self._on_status_error,
+        )
 
     # -- rendering ---------------------------------------------------------
 
     def _apply_status(self, status) -> None:
-        state = status.status  # e.g. "Connected", "Connecting", "NeedsLogin", "Disconnected"
+        state = (
+            status.status
+        )  # e.g. "Connected", "Connecting", "NeedsLogin", "Disconnected"
         self._connected = state == "Connected"
         needs_login = state == "NeedsLogin"
         self._needs_login = needs_login
@@ -172,7 +177,8 @@ class StatusView(Adw.Bin):
         self._conn_row.set_subtitle(mgmt.URL or "")
         self._mgmt_row.set_subtitle(
             f"{'Connected' if mgmt.connected else 'Disconnected'} · {mgmt.URL}"
-            if mgmt.URL else "—"
+            if mgmt.URL
+            else "—"
         )
         local = fs.localPeerState
         self._ip_row.set_subtitle(local.IP or "—")
@@ -251,17 +257,21 @@ class StatusView(Adw.Bin):
         if self._connected:
             self._busy = True
             self._connect_button.set_sensitive(False)
-            run_async(self._client.down(),
-                      on_success=lambda _: self._after_action("Disconnected"),
-                      on_error=self._on_action_error)
+            run_async(
+                self._client.down(),
+                on_success=lambda _: self._after_action("Disconnected"),
+                on_error=self._on_action_error,
+            )
         elif self._needs_login:
             self._open_login()
         else:
             self._busy = True
             self._connect_button.set_sensitive(False)
-            run_async(self._client.up(),
-                      on_success=lambda _: self._after_action("Connecting…"),
-                      on_error=self._on_action_error)
+            run_async(
+                self._client.up(),
+                on_success=lambda _: self._after_action("Connecting…"),
+                on_error=self._on_action_error,
+            )
 
     def _open_login(self) -> None:
         from birdie.views.login_dialog import LoginDialog

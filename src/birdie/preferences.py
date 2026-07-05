@@ -29,30 +29,90 @@ if TYPE_CHECKING:
 # (proto field on SetConfigRequest, GetConfigResponse attr, title, subtitle,
 #  best-effort MDM key name). Booleans only.
 BOOL_FIELDS = [
-    ("disableAutoConnect", "disableAutoConnect", "Disable auto-connect",
-     "Do not connect automatically when the daemon starts.", "disableAutoConnect"),
-    ("rosenpassEnabled", "rosenpassEnabled", "Rosenpass (post-quantum)",
-     "Enable post-quantum key exchange.", "rosenpassEnabled"),
-    ("serverSSHAllowed", "serverSSHAllowed", "Allow SSH server",
-     "Permit incoming NetBird SSH connections.", "serverSSHAllowed"),
-    ("networkMonitor", "networkMonitor", "Network monitor",
-     "Restart the connection on network changes.", "networkMonitor"),
-    ("lazyConnectionEnabled", "lazyConnectionEnabled", "Lazy connections",
-     "Establish peer connections on demand.", "lazyConnectionEnabled"),
-    ("disable_notifications", "disable_notifications", "Disable notifications",
-     "Suppress desktop notifications from the daemon.", "disableNotifications"),
-    ("disable_dns", "disable_dns", "Disable DNS",
-     "Do not manage DNS settings.", "disableDNS"),
-    ("disable_client_routes", "disable_client_routes", "Disable client routes",
-     "Do not apply routes received from the network.", "disableClientRoutes"),
-    ("disable_server_routes", "disable_server_routes", "Disable server routes",
-     "Do not advertise routes to other peers.", "disableServerRoutes"),
-    ("block_lan_access", "block_lan_access", "Block LAN access",
-     "Prevent peers from reaching your local network.", "blockLANAccess"),
-    ("block_inbound", "blockInbound", "Block inbound",
-     "Drop all inbound connections from peers.", "blockInbound"),
-    ("disable_ipv6", "disable_ipv6", "Disable IPv6",
-     "Turn off IPv6 within the tunnel.", "disableIPv6"),
+    (
+        "disableAutoConnect",
+        "disableAutoConnect",
+        "Disable auto-connect",
+        "Do not connect automatically when the daemon starts.",
+        "disableAutoConnect",
+    ),
+    (
+        "rosenpassEnabled",
+        "rosenpassEnabled",
+        "Rosenpass (post-quantum)",
+        "Enable post-quantum key exchange.",
+        "rosenpassEnabled",
+    ),
+    (
+        "serverSSHAllowed",
+        "serverSSHAllowed",
+        "Allow SSH server",
+        "Permit incoming NetBird SSH connections.",
+        "serverSSHAllowed",
+    ),
+    (
+        "networkMonitor",
+        "networkMonitor",
+        "Network monitor",
+        "Restart the connection on network changes.",
+        "networkMonitor",
+    ),
+    (
+        "lazyConnectionEnabled",
+        "lazyConnectionEnabled",
+        "Lazy connections",
+        "Establish peer connections on demand.",
+        "lazyConnectionEnabled",
+    ),
+    (
+        "disable_notifications",
+        "disable_notifications",
+        "Disable notifications",
+        "Suppress desktop notifications from the daemon.",
+        "disableNotifications",
+    ),
+    (
+        "disable_dns",
+        "disable_dns",
+        "Disable DNS",
+        "Do not manage DNS settings.",
+        "disableDNS",
+    ),
+    (
+        "disable_client_routes",
+        "disable_client_routes",
+        "Disable client routes",
+        "Do not apply routes received from the network.",
+        "disableClientRoutes",
+    ),
+    (
+        "disable_server_routes",
+        "disable_server_routes",
+        "Disable server routes",
+        "Do not advertise routes to other peers.",
+        "disableServerRoutes",
+    ),
+    (
+        "block_lan_access",
+        "block_lan_access",
+        "Block LAN access",
+        "Prevent peers from reaching your local network.",
+        "blockLANAccess",
+    ),
+    (
+        "block_inbound",
+        "blockInbound",
+        "Block inbound",
+        "Drop all inbound connections from peers.",
+        "blockInbound",
+    ),
+    (
+        "disable_ipv6",
+        "disable_ipv6",
+        "Disable IPv6",
+        "Turn off IPv6 within the tunnel.",
+        "disableIPv6",
+    ),
 ]
 
 
@@ -102,7 +162,9 @@ class PreferencesDialog(Adw.PreferencesDialog):
         self._suppress = True
         self._mgmt_row.set_subtitle(cfg.managementUrl or "—")
         self._iface_row.set_subtitle(cfg.interfaceName or "—")
-        self._port_row.set_subtitle(str(cfg.wireguardPort) if cfg.wireguardPort else "—")
+        self._port_row.set_subtitle(
+            str(cfg.wireguardPort) if cfg.wireguardPort else "—"
+        )
         self._mtu_row.set_subtitle(str(cfg.mtu) if cfg.mtu else "—")
 
         for proto_field, attr, _title, subtitle, mdm_key in BOOL_FIELDS:

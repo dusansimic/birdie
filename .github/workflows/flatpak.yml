@@ -1,0 +1,47 @@
+name: Build Flatpak
+
+# Build a Flatpak bundle of Birdie on every push to main that touches build
+# inputs. The bundle filename carries the short commit SHA and is uploaded as
+# a workflow artifact. Docs/tooling-only changes are filtered out so we don't
+# rebuild for things that can't affect the package.
+on:
+  # Manual trigger for test runs (the push filter below only fires on main).
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "data/**"
+      - "proto/**"
+      - "po/**"
+      - "build-aux/**"
+      - "meson.build"
+      - "meson_options.txt"
+      - ".github/workflows/flatpak.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  flatpak:
+    name: Build bundle
+    runs-on: ubuntu-latest
+    container:
+      # Must match the manifest's runtime-version (org.gnome.Platform 50).
+      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-50
+      options: --privileged
+    steps:
+      - name: Check out
+        uses: actions/checkout@v7
+
+      - name: Compute bundle name
+        id: vars
+        run: echo "bundle=me.dusansimic.Birdie-${GITHUB_SHA::7}.flatpak" >> "$GITHUB_OUTPUT"
+
+      - name: Build Flatpak
+        uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          # upload-artifact defaults to true: the bundle is attached to the run,
+          # named after the SHA-stamped file below.
+          bundle: ${{ steps.vars.outputs.bundle }}
+          manifest-path: build-aux/flatpak/me.dusansimic.Birdie.json

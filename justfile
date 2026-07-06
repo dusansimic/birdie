@@ -36,10 +36,13 @@ flatpak:
     flatpak run org.flatpak.Builder --force-clean --user --install-deps-from=flathub \
         --repo=repo flatpak-build build-aux/flatpak/me.dusansimic.Birdie.json
 
-# Install the locally-built Flatpak and run it.
-flatpak-run: flatpak
+# Install the locally-built Flatpak from the ./repo remote.
+flatpak-install: flatpak
     flatpak remote-add --user --no-gpg-verify --if-not-exists birdie-local repo
     flatpak install --user -y --reinstall birdie-local me.dusansimic.Birdie
+
+# Install the locally-built Flatpak and run it.
+flatpak-run: flatpak-install
     flatpak run me.dusansimic.Birdie
 
 # Remove build artifacts.
